@@ -1,7 +1,7 @@
 ---
 name: health
 description: "Audits or prunes agent config, instruction drift, hooks or MCP, and AI maintainability. Use when Claude, Codex, or Pi setup looks wrong or guidance needs slimming. Not for application bugs or PR review."
-when_to_use: "检查claude, 检查codex, 检查pi, Codex 配置, Pi 配置, agent instructions, 健康度, 配置检查, 配置对不对, AI coding 腐化, 精简规则, 精简 skills, 规则瘦身, Claude ignoring instructions, Pi coding agent, check config, settings not working, audit config, prune guidance, slim AGENTS.md"
+when_to_use: "检查claude, 检查codex, 检查pi, Codex 配置, Pi 配置, agent instructions, 健康度, 配置检查, 配置对不对, AI coding 腐化, 精简规则, 精简 skills, 规则瘦身, Claude ignoring instructions, Pi coding agent, check config, settings not working, audit config, prune guidance, slim AGENTS.md, проверь настройки claude, проверь конфиг, проверь codex, claude игнорирует инструкции, агент не слушается, хук не работает, MCP не работает, почисти правила, сократи AGENTS.md, сократи CLAUDE.md, аудит конфигурации"
 dispatch_intent: "Codex/Claude/Pi ignoring instructions, agent config audit, prune or slim agent guidance and skills, hooks/MCP broken, health token usage, AI coding code rot, risk-backed hotspot ownership, unreachable project constraints, unclear context, missing verification, stale verifier output"
 ---
 

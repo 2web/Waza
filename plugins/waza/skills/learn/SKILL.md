@@ -1,7 +1,7 @@
 ---
 name: learn
 description: "Runs a six-phase research workflow from source bundle to publish-ready output. Use when researching an unfamiliar domain or compiling materials into one reference. Not for quick lookups or single-file reads."
-when_to_use: "学习一下, 深入研究, 研究一下, 整理成文章, 把这批材料整理, 一站式参考, 一篇就够, 整理成长文, research, deep dive, help me understand, compile sources, unfamiliar domain"
+when_to_use: "学习一下, 深入研究, 研究一下, 整理成文章, 把这批材料整理, 一站式参考, 一篇就够, 整理成长文, research, deep dive, help me understand, compile sources, unfamiliar domain, изучи тему, разберись в теме, глубоко исследуй, исследуй тему, собери материалы, сведи источники, собери в одну статью, помоги понять, незнакомая область"
 dispatch_intent: "Deep research, unfamiliar domain, compile sources into output"
 ---
 

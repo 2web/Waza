@@ -9,9 +9,10 @@ inline code, URLs, and link targets so punctuation that belongs to code is
 never flagged.
 
 Run as: python3 check_punctuation.py [--lang LANG] [--fix] [FILE]
-  --lang  zh | en | ja | auto   (default: auto). auto classifies the whole
+  --lang  zh | en | ja | ru | auto   (default: auto). auto classifies the whole
           input by fixed priority: any kana is ja, else any CJK is zh, else
-          any Hangul is ko (reserved, skipped), else en. Pass --lang
+          any Hangul is ko (reserved, skipped), else ru when Cyrillic letters
+          outnumber Latin ones, else en. Pass --lang
           explicitly for mixed-locale or predominantly-English text.
   --fix   print corrected text to stdout (zero-ambiguity fixes only)
   FILE    file to read; reads stdin when omitted
@@ -31,6 +32,9 @@ import sys
 CJK = "一-鿿㐀-䶿"
 KANA = "぀-ヿ"
 HANGUL = "가-힣"
+# Russian fork: Cyrillic U+0400-U+04FF.
+CYRILLIC = "Ѐ-ӿ"
+_CYRILLIC_RE = re.compile(f"[{CYRILLIC}]")
 
 URL_RE = re.compile(r"https?://(?:\([^()]*\)|[A-Za-z0-9\-._~:/?#\[\]@!$&'*+,;=%])+")
 # group(1) captures only the (url) target so the [label] stays visible to checks.
@@ -179,6 +183,7 @@ def detect_lang(text: str) -> str:
     # anywhere => ja, hence the early return); else Han => zh; Hangul is checked
     # LAST so a mostly-Chinese text that merely quotes a Korean glyph stays zh.
     saw_cjk = saw_hangul = False
+    cyr = lat = 0  # Russian fork: letter counts for the ru/en split
     fence: tuple[str, int] | None = None
     for raw in _split_keepends(text):
         body, _ = split_line_ending(raw)
@@ -191,7 +196,9 @@ def detect_lang(text: str) -> str:
             return "ja"
         saw_cjk = saw_cjk or bool(_CJK_RE.search(prose))
         saw_hangul = saw_hangul or bool(_HANGUL_RE.search(prose))
-    return "zh" if saw_cjk else "ko" if saw_hangul else "en"
+        cyr += len(_CYRILLIC_RE.findall(prose))
+        lat += len(re.findall(r"[A-Za-z]", prose))
+    return "zh" if saw_cjk else "ko" if saw_hangul else "ru" if cyr > lat else "en"
 
 
 class Finding:
@@ -299,7 +306,28 @@ def check_ja(line: str, mask: list[bool], lineno: int, findings: list[Finding]) 
         findings.append(Finding(lineno, m.start() + 1, "ja-extra-space", m.group(), "remove space between Japanese and Latin"))
 
 
-CHECKERS = {"zh": check_zh, "en": check_en, "ja": check_ja}
+def check_ru(line: str, mask: list[bool], lineno: int, findings: list[Finding]) -> None:
+    """Russian fork. Russian typography needs the em dash (тире), so check_dash
+    does not apply. Flags the dash look-alikes instead: a spaced hyphen or en
+    dash between words, an unspaced em dash between words, straight double
+    quotes touching Cyrillic, a space before punctuation, and CJK marks. An en
+    dash inside a range (1–5, 2020–2024) and a leading dialogue dash stay legal."""
+    check_latin_space(line, mask, lineno, findings)
+    rules = (
+        (r"(?<=\S) [-–] (?=\S)", "ru-hyphen-as-dash", "use a spaced em dash ' — '"),
+        (rf"[{CYRILLIC}A-Za-z]—[{CYRILLIC}A-Za-z]", "ru-dash-spacing", "put spaces around the em dash"),
+        (rf'"(?=[{CYRILLIC}])|(?<=[{CYRILLIC}.,!?])"', "ru-straight-quotes", "use «» quotes"),
+        (r"(?<=\S) +[,.;:!?](?=\s|$)", "ru-space-before-punct", "remove space before punctuation"),
+        (f"[{_CJK_PUNCT}]", "ru-fullwidth-punct", "use ASCII punctuation"),
+    )
+    for pattern, kind, suggestion in rules:
+        for m in re.finditer(pattern, line):
+            if overlaps_exempt(mask, m.start(), m.end()):
+                continue
+            findings.append(Finding(lineno, m.start() + 1, kind, m.group(), suggestion))
+
+
+CHECKERS = {"zh": check_zh, "en": check_en, "ja": check_ja, "ru": check_ru}
 
 
 def fix_zh_line(line: str) -> str:
@@ -384,7 +412,7 @@ def iter_findings(text: str, lang: str) -> list[Finding]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check punctuation / CJK mixing by locale.")
     parser.add_argument("file", nargs="?", help="File to read (default: stdin)")
-    parser.add_argument("--lang", default="auto", choices=["zh", "en", "ja", "auto"])
+    parser.add_argument("--lang", default="auto", choices=["zh", "en", "ja", "ru", "auto"])
     parser.add_argument("--fix", action="store_true", help="Print corrected text to stdout")
     args = parser.parse_args()
 

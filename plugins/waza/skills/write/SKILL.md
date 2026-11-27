@@ -1,7 +1,7 @@
 ---
 name: write
-description: "Rewrites and polishes Chinese or English prose, technical instructions, and product copy. Use when drafting, editing, localizing, or cutting AI tone. Not for code comments or commit messages."
-when_to_use: "改稿, 润色, 去AI味, 帮我写文案, 审稿, 文档review, 技术说明改写, 指令消歧, clarify instructions, technical writing, 本地化文案, 多语言文案, i18n copy, localization copy, check this document, 推特, twitter, X推文, tweet, social post, draft, edit text, proofread, sound natural, polish, rewrite"
+description: "Rewrites and polishes Chinese, English, or Russian prose, technical instructions, and product copy. Use when drafting, editing, localizing, or cutting AI tone. Not for code comments or commit messages."
+when_to_use: "改稿, 润色, 去AI味, 帮我写文案, 审稿, 文档review, 技术说明改写, 指令消歧, clarify instructions, technical writing, 本地化文案, 多语言文案, i18n copy, localization copy, check this document, 推特, twitter, X推文, tweet, social post, draft, edit text, proofread, sound natural, polish, rewrite, отредактируй, вычитай, перепиши, поправь текст, убери канцелярит, сделай по-человечески, напиши текст, напиши пост, причеши текст, переведи на русский"
 dispatch_intent: "Writing, editing prose, clarify technical instructions, polish, release notes, launch/social copy, remove AI tone"
 ---
 
@@ -42,6 +42,7 @@ This skill is a catalog of smells, not a checklist to run top to bottom. Use it 
    - Bilingual or translation review loads `references/write-zh-bilingual.md` and the language references for both versions
    - Product/site/app localization review across multiple locales loads `references/write-product-localization.md`; also load `references/write-zh-bilingual.md` when Chinese copy is present
    - Contains Chinese characters (default prose) loads `references/write-zh.md`
+   - Predominantly Cyrillic (Russian) prose loads `references/write-ru.md` (Russian fork)
    - Otherwise loads `references/write-en.md`
 
 ## Mode Picker
@@ -94,7 +95,7 @@ Load `references/write-zh-release-notes.md` for the five announcement rules (com
 - **Material gate before drafting long-form.** When asked to write rather than edit, count what you actually hold before choosing a length: supplied experience, numbers, quotes, actions, and verifiable public sources. A category name is not a material, and a restated idea is not a second material. A material the intended reader would already predict (common sense, consensus advice, the topic's standard talking points) does not count either; if no section carries something that reader would not have guessed, ask the author for the surprising part instead of drafting the predictable version. Reasoning connects material; it does not breed material. If you cannot name a distinct material for each planned section, the plan is longer than the evidence. Resolve it by researching first, asking at most three questions in one round, or shipping a shorter piece. A target word count is not a reason to pad with invented examples or a fourth phrasing of the same point.
 - **Shorter than the first draft wants to be.** Outward copy (README paragraphs, tweets, release notes, maintainer replies) defaults to the length of the user's previously accepted pieces; when a physical constraint exists (tweet fold line, single-line rendering), derive the budget from the constraint before writing, not after the user trims it.
 - **Artifact-grounded claims.** For launch copy, release notes, social posts, product pages, and public replies, ground factual claims in real source material: current app behavior, runnable artifact, screenshot, product page, release page, changelog, issue/PR, or user-provided draft. Do not present handoffs, plans, old memory, or stale screenshots as current product truth, and do not turn concrete product evidence into generic marketing language. Compare the draft against the shipping artifact and tighten until the two agree.
-- **No em-dash.** Never produce em-dash (U+2014) or en-dash (U+2013) in Chinese or English output, and replace every one in an edited draft; it is the strongest AI-tone fingerprint here. Use commas, periods, colons, or parentheses; hyphen-minus inside compound words is allowed.
+- **No em-dash.** Never produce em-dash (U+2014) or en-dash (U+2013) in Chinese or English output, and replace every one in an edited draft (Russian prose is exempt: follow `references/write-ru.md`); it is the strongest AI-tone fingerprint here. Use commas, periods, colons, or parentheses; hyphen-minus inside compound words is allowed.
 - **Route bundled work without dropping it.** Code comments and commit messages stay outside this prose skill. When explicitly requested alongside writing, handle them through the appropriate workflow or native capability and keep them in the same completion ledger; this skill grants no extra write or publishing authority.
 - **Match the requested handoff.** Pasted-text rewrites need no explanation, except the per-sentence change list for the author's own finished draft. Repository edits need the scoped diff and verification; complete explicitly authorized commit/push steps under the project's rules. A prose-only output convention must not hide unfinished delivery.
 
@@ -110,7 +111,7 @@ for candidate in \
   [ -f "$candidate" ] && GATE="$candidate" && break
 done
 [ -f "${GATE:-}" ] || { echo "punctuation gate not found under the installed skill base; reinstall Waza" >&2; exit 1; }
-bash "$GATE" --lang <zh|en|ja|auto> <file>   # or pipe text via stdin
+bash "$GATE" --lang <zh|en|ja|ru|auto> <file>   # or pipe text via stdin
 ```
 
 Replace `<skill-base-dir>` with the installed Write skill or Waza dispatcher directory. The first path covers direct/plugin installs; the second covers the inlined-root release ZIP.

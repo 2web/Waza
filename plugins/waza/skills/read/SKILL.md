@@ -1,7 +1,7 @@
 ---
 name: read
 description: "Fetches URLs and PDFs, then summarizes or returns clean Markdown; can also search the web through DeepSeek when built-in search is thin. Use when asked to read, fetch, quote, cite, convert, or save a URL or PDF. Not for local text files already in the repo."
-when_to_use: "看这个链接, 读一下, 看看这个网页, 抓取网页, 搜不到, 换个搜索, DeepSeek 搜索, read this, check this URL, fetch this page, search with DeepSeek"
+when_to_use: "看这个链接, 读一下, 看看这个网页, 抓取网页, 搜不到, 换个搜索, DeepSeek 搜索, read this, check this URL, fetch this page, search with DeepSeek, прочитай ссылку, прочитай статью, открой ссылку, посмотри страницу, что на этой странице, скачай страницу, перескажи статью, прочитай PDF, сохрани в markdown, поищи через DeepSeek"
 dispatch_intent: "Any URL or PDF to fetch, read this, fetch this page"
 ---
 
